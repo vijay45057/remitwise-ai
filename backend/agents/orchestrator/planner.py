@@ -24,8 +24,10 @@ Usage::
 from __future__ import annotations
 
 import re
+import time
 from typing import Dict, List, Optional, Set, Tuple
 
+from agents.orchestrator.base_planner import BasePlanner
 from agents.shared.logger import AgentLogger
 from agents.shared.schemas import (
     AgentContext,
@@ -111,9 +113,9 @@ _AMOUNT_RE = re.compile(
 )
 
 
-class Planner:
+class RuleBasedPlanner(BasePlanner):
     """
-    Intent detector and execution plan generator.
+    Rule-based intent detector and execution plan generator.
 
     Given a raw user query (and optional pre-extracted context),
     returns an ``ExecutionPlan`` describing which agents to run
@@ -148,6 +150,7 @@ class Planner:
         -------
         ExecutionPlan
         """
+        start_t = time.perf_counter()
         q_lower = query.lower()
 
         # 1. Extract context from query
@@ -162,12 +165,22 @@ class Planner:
         # 4. Build ordered plan steps
         steps = self._build_steps(agents_needed, ctx)
 
+        latency_ms = round((time.perf_counter() - start_t) * 1000, 2)
+
+        reasoning = (
+            f"RuleBasedPlanner detected intents: {[i.value for i in intents]} "
+            f"for query: '{query}'"
+        )
+
         plan = ExecutionPlan(
             steps=steps,
             intents=intents,
             is_multi_domain=len(agents_needed) > 1,
             extracted_context=ctx,
             confidence=self._confidence(intents),
+            reasoning=reasoning,
+            planner_name="rule_based",
+            planning_latency_ms=latency_ms,
         )
 
         self._logger.log_plan(
@@ -175,6 +188,7 @@ class Planner:
             [i.value for i in intents],
         )
         return plan
+
 
     # ------------------------------------------------------------------
     # Context extraction
@@ -402,3 +416,8 @@ class Planner:
         if IntentType.MULTI_DOMAIN in intents:
             return 0.95
         return 0.9
+
+
+# Alias for backward compatibility
+Planner = RuleBasedPlanner
+

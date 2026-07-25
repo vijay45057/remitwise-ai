@@ -59,6 +59,10 @@ class ConversationMemory:
         role: str,
         content: str,
         agents_used: Optional[List[str]] = None,
+        planner_name: Optional[str] = None,
+        provider_name: Optional[str] = None,
+        reasoning: Optional[str] = None,
+        confidence: Optional[float] = None,
     ) -> None:
         """
         Append a message to the session's conversation history.
@@ -73,14 +77,27 @@ class ConversationMemory:
             Message text.
         agents_used : list[str], optional
             Which agents produced this assistant message (for traceability).
+        planner_name : str, optional
+            Name of the planner used ('llm' or 'rule_based').
+        provider_name : str, optional
+            LLM provider name ('ollama', 'mock', 'openai').
+        reasoning : str, optional
+            Planner reasoning summary.
+        confidence : float, optional
+            Planner confidence score.
         """
         msg = ConversationMessage(
             role=role,
             content=content,
             agents_used=agents_used or [],
+            planner_name=planner_name,
+            provider_name=provider_name,
+            reasoning=reasoning,
+            confidence=confidence,
         )
         with self._lock:
             self._store[session_id].append(msg)
+
 
     # ------------------------------------------------------------------
     # Read

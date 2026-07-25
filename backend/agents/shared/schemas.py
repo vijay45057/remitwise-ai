@@ -59,6 +59,11 @@ class ConversationMessage(BaseModel):
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
     agents_used: List[str] = Field(default_factory=list)
+    planner_name: Optional[str] = Field(None, description="Planner used for this turn")
+    provider_name: Optional[str] = Field(None, description="LLM provider name ('ollama', 'mock', 'openai')")
+    reasoning: Optional[str] = Field(None, description="Planner reasoning")
+    confidence: Optional[float] = Field(None, description="Planner confidence score")
+
 
 
 # ---------------------------------------------------------------------------
@@ -140,6 +145,11 @@ class ExecutionPlan(BaseModel):
     is_multi_domain: bool          = Field(False)
     extracted_context: AgentContext = Field(default_factory=AgentContext)
     confidence: float              = Field(1.0, description="Planning confidence 0.0–1.0")
+    reasoning: Optional[str]        = Field(None, description="Explanation for agent selection")
+    planner_name: Optional[str]     = Field(None, description="Name of the planner ('llm' or 'rule_based')")
+    provider_name: Optional[str]    = Field(None, description="Name of the LLM provider ('ollama', 'mock', 'openai')")
+    planning_latency_ms: float      = Field(0.0, description="Time taken to produce plan in milliseconds")
+
 
 
 # ---------------------------------------------------------------------------

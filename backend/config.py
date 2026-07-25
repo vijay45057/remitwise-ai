@@ -65,6 +65,21 @@ class Settings:
     COMPLIANCE_FILE: str = os.path.join(DATA_DIR, "compliance_rules.json")
 
     # ---------------------------------------------------------------------------
+    # LLM & Multi-Agent Planning Configuration
+    # ---------------------------------------------------------------------------
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_BASE_URL: str = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1")
+    OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+
+    OLLAMA_HOST: str = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "llama3.1")
+
+    LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "ollama")
+    LLM_TEMPERATURE: float = float(os.getenv("TEMPERATURE", "0.0"))
+    LLM_MAX_TOKENS: int = int(os.getenv("MAX_TOKENS", "500"))
+    LLM_TIMEOUT: float = float(os.getenv("TIMEOUT", "5.0"))
+
+    # ---------------------------------------------------------------------------
     # Supported currencies (ISO-4217 subset used by Frankfurter)
     # ---------------------------------------------------------------------------
     SUPPORTED_CURRENCIES: List[str] = [
@@ -77,3 +92,4 @@ class Settings:
 
 # Singleton instance – import this everywhere
 settings = Settings()
+

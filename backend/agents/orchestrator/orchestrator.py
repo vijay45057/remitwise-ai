@@ -39,12 +39,15 @@ from agents.shared.schemas import (
     AgentName,
     AgentRequest,
     AgentResponse,
+    ExecutionPlan,
     OrchestratorRequest,
     OrchestratorResponse,
 )
-from agents.orchestrator.planner  import Planner
+from agents.orchestrator.base_planner import BasePlanner
+from agents.orchestrator.planner import RuleBasedPlanner, Planner
+from agents.orchestrator.llm_planner import LLMPlanner
 from agents.orchestrator.executor import Executor
-from agents.orchestrator.merger   import Merger
+from agents.orchestrator.merger import Merger
 
 
 logger = AgentLogger("Orchestrator")
@@ -58,11 +61,18 @@ class OrchestratorAgent:
     Stateless between requests — all state lives in ConversationMemory.
     """
 
-    def __init__(self) -> None:
-        self._planner  = Planner()
+    def __init__(
+        self,
+        llm_planner: Optional[BasePlanner] = None,
+        rule_planner: Optional[BasePlanner] = None,
+    ) -> None:
+        self._llm_planner = llm_planner or LLMPlanner()
+        self._rule_planner = rule_planner or RuleBasedPlanner()
+        # self._planner is provided for backwards compatibility
+        self._planner = self._llm_planner
         self._executor = Executor()
-        self._merger   = Merger()
-        self._logger   = logger
+        self._merger = Merger()
+        self._logger = logger
 
     # ------------------------------------------------------------------
     # Public API
@@ -92,10 +102,34 @@ class OrchestratorAgent:
         history = request.history or memory_store.get_recent(session_id, n=10)
 
         # ── Step 2: Plan — detect intent, select agents ──────────────
-        plan = self._planner.plan(
-            query=request.query,
-            context_override=request.context or {},
-        )
+        plan: ExecutionPlan
+        fallback_reason: Optional[str] = None
+
+        try:
+            plan = self._llm_planner.plan(
+                query=request.query,
+                context_override=request.context or {},
+            )
+            self._logger.info(
+                f"🧠 Primary Planner (LLM) selected: {[s.agent.value for s in plan.steps]} | "
+                f"Confidence: {plan.confidence} | Latency: {plan.planning_latency_ms:.1f}ms | "
+                f"Reasoning: {plan.reasoning}"
+            )
+        except Exception as exc:
+            fallback_reason = str(exc)
+            self._logger.info("Using RuleBasedPlanner.")
+            self._logger.warning(
+                f"⚠️ LLMPlanner failed: {exc}. Automatically falling back to RuleBasedPlanner."
+            )
+            plan = self._rule_planner.plan(
+                query=request.query,
+                context_override=request.context or {},
+            )
+            self._logger.info(
+                f"🔄 Fallback Planner (RuleBased) selected: {[s.agent.value for s in plan.steps]} | "
+                f"Fallback reason: {fallback_reason} | Latency: {plan.planning_latency_ms:.1f}ms"
+            )
+
         ctx = plan.extracted_context
 
         # ── Step 3: Build AgentRequest ───────────────────────────────
@@ -126,6 +160,10 @@ class OrchestratorAgent:
             "assistant",
             merged.summary,
             agents_used=merged.agents_used,
+            planner_name=plan.planner_name or ("llm" if not fallback_reason else "rule_based"),
+            provider_name=plan.provider_name,
+            reasoning=plan.reasoning,
+            confidence=plan.confidence,
         )
 
         # ── Step 7: Build final response ─────────────────────────────
@@ -134,8 +172,9 @@ class OrchestratorAgent:
         pipeline_logger.log_merge(merged.agents_used, merged.summary[:80])
         self._logger.info(
             f"✅ Orchestrator complete | {len(agent_responses)} agent(s) | "
-            f"{total_ms:.1f}ms | status={merged.status}"
+            f"Planner={plan.planner_name or 'rule_based'} | {total_ms:.1f}ms | status={merged.status}"
         )
+
 
         return OrchestratorResponse(
             session_id=session_id,
