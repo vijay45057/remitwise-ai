@@ -27,7 +27,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from config import settings
-from api.routes import exchange, providers, compliance, health
+from api.routes import exchange, providers, compliance, health, agent
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -93,6 +93,7 @@ app.include_router(health.router)
 app.include_router(exchange.router)
 app.include_router(providers.router)
 app.include_router(compliance.router)
+app.include_router(agent.router)
 
 # ---------------------------------------------------------------------------
 # Root redirect info
