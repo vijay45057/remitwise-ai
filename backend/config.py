@@ -42,12 +42,20 @@ class Settings:
     CORS_ALLOW_HEADERS: List[str] = ["*"]
 
     # ---------------------------------------------------------------------------
-    # External APIs
+    # External APIs & Multi-Tier Fallback Stack
     # ---------------------------------------------------------------------------
     FRANKFURTER_BASE_URL: str = os.getenv(
         "FRANKFURTER_BASE_URL", "https://api.frankfurter.app"
     )
-    HTTP_TIMEOUT_SECONDS: int = int(os.getenv("HTTP_TIMEOUT_SECONDS", 10))
+    EXCHANGERATE_HOST_BASE_URL: str = os.getenv(
+        "EXCHANGERATE_HOST_BASE_URL", "https://api.exchangerate.host"
+    )
+    OPEN_ER_API_BASE_URL: str = os.getenv(
+        "OPEN_ER_API_BASE_URL", "https://open.er-api.com/v6/latest"
+    )
+    HTTP_TIMEOUT_SECONDS: int = int(os.getenv("HTTP_TIMEOUT_SECONDS", 5))
+    USER_AGENT: str = "RemitWiseAI/1.0"
+    CACHE_TTL_SECONDS: int = int(os.getenv("CACHE_TTL_SECONDS", 30))
 
     # ---------------------------------------------------------------------------
     # Local data files

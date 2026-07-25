@@ -42,12 +42,20 @@ export interface ExchangeRateData {
   base: CurrencyCode;
   target: CurrencyCode;
   rate: number;
+  previousClose?: number;
   change24h: number;
   high24h: number;
   low24h: number;
   history7d: { date: string; rate: number }[];
   history30d: { date: string; rate: number }[];
   lastUpdated: string;
+  provider?: string;
+  source?: string;
+  market?: string;
+  cache?: string;
+  latencyMs?: number;
+  staleSeconds?: number;
+  rawJson?: any;
 }
 
 export interface AgentStep {

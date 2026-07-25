@@ -15,10 +15,13 @@ import {
   RefreshCw,
   BarChart3,
   ChevronDown,
+  Activity,
 } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import { AnimatedMap } from '../components/common/AnimatedMap';
 import { useTransfer } from '../contexts/TransferContext';
 import { INITIAL_PROVIDERS } from '../utils/constants';
+import { apiService } from '../services/apiService';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
@@ -86,6 +89,19 @@ export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const { runJudgeDemoMode } = useTransfer();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Live rate for hero display (30s polling)
+  const { data: heroRate, isLoading: heroRateLoading } = useQuery({
+    queryKey: ['landingHeroRate'],
+    queryFn: () => apiService.getLatestRate('USD', 'INR'),
+    refetchInterval: 30000,
+    staleTime: 25000,
+  });
+
+  const liveRate = heroRate?.rate;
+  const rateChange = heroRate?.change24h || 0;
+  const isPositive = rateChange >= 0;
+  const heroRateSource = heroRate?.cache || 'LIVE';
 
   return (
     <div className="space-y-24 pb-24">
@@ -167,6 +183,31 @@ export const LandingPage: React.FC = () => {
             </button>
           </motion.div>
 
+          {/* Live rate badge */}
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            custom={3.5}
+            className="flex justify-center"
+          >
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-900/80 dark:bg-slate-800/90 border border-slate-700/60 text-white shadow-xl backdrop-blur-md">
+              <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+              <span className="text-[11px] font-mono text-slate-400">USD → INR</span>
+              <span className="text-[15px] font-black font-mono text-white">
+                {heroRateLoading ? '...' : liveRate ? `₹${liveRate.toFixed(2)}` : '₹96.56'}
+              </span>
+              <span className={`text-[11px] font-bold ${isPositive ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {isPositive ? '▲' : '▼'} {Math.abs(rateChange).toFixed(2)}%
+              </span>
+              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase ${
+                heroRateSource === 'HIT' ? 'bg-blue-500/20 text-blue-400' : 'bg-emerald-500/20 text-emerald-400'
+              }`}>
+                {heroRateSource === 'STALE' ? 'Cached' : 'Live'}
+              </span>
+            </div>
+          </motion.div>
+
           {/* Trust row */}
           <motion.div
             variants={fadeUp}
@@ -183,6 +224,7 @@ export const LandingPage: React.FC = () => {
             ))}
           </motion.div>
         </div>
+
 
         {/* Metrics bar */}
         <motion.div

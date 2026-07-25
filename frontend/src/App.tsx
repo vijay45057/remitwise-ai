@@ -8,6 +8,7 @@ import { LiveTicker } from './components/layout/LiveTicker';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { JudgeDemoButton } from './components/layout/JudgeDemoButton';
+import { DeveloperDebugPanel } from './components/common/DeveloperDebugPanel';
 
 import { LandingPage } from './pages/LandingPage';
 import { Dashboard } from './pages/Dashboard';
@@ -21,7 +22,14 @@ import { Compliance } from './pages/Compliance';
 import { TransferTracker } from './pages/TransferTracker';
 import { Settings } from './pages/Settings';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 2,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export function App() {
   return (
@@ -30,7 +38,7 @@ export function App() {
         <TransferProvider>
           <Router>
             <div className="min-h-screen flex flex-col font-sans aurora-bg text-slate-900 dark:text-slate-100 transition-colors duration-300">
-              {/* Sticky Top Live FX Ticker */}
+              {/* Sticky Top Live FX Ticker (30s Polling) */}
               <LiveTicker />
 
               {/* Navigation Header */}
@@ -55,6 +63,9 @@ export function App() {
 
               {/* Floating Hackathon Judge Demo Button */}
               <JudgeDemoButton />
+
+              {/* Developer Live API Debug Panel */}
+              <DeveloperDebugPanel />
 
               {/* Global Footer */}
               <Footer />

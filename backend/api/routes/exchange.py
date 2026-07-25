@@ -43,23 +43,18 @@ def get_latest_rate(
     try:
         return exchange_service.get_latest_rate(base=base, target=target)
     except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc))
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
     except Timeout:
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
-            detail="Frankfurter API timed out. Please try again later.",
+            detail="Exchange rate upstream APIs timed out. Please try again later.",
         )
-    except ConnectionError:
+    except ConnectionError as exc:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="Unable to reach Frankfurter API. Check your network connection.",
+            detail=f"All upstream exchange rate providers failed: {str(exc)}",
         )
     except HTTPError as exc:
-        if exc.response is not None and exc.response.status_code == 404:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Currency pair '{base.upper()}/{target.upper()}' is not supported by Frankfurter API. Call /exchange/currencies to see supported currencies.",
-            )
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
             detail=f"Upstream API error: {exc.response.status_code if exc.response else 'Unknown'}",

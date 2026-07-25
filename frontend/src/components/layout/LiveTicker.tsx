@@ -1,56 +1,51 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { TrendingUp, TrendingDown, Zap } from 'lucide-react';
+import { apiService } from '../../services/apiService';
 
 const TICKER_PAIRS = [
-  { pair: 'AED → INR', rate: 23.42, change: '+0.15%', isUp: true },
-  { pair: 'USD → INR', rate: 87.31, change: '-0.08%', isUp: false },
-  { pair: 'GBP → INR', rate: 118.22, change: '+0.42%', isUp: true },
-  { pair: 'CAD → INR', rate: 63.44, change: '-0.12%', isUp: false },
-  { pair: 'AUD → INR', rate: 56.90, change: '+0.28%', isUp: true },
-  { pair: 'SGD → INR', rate: 65.18, change: '+0.10%', isUp: true },
-  { pair: 'USD → PHP', rate: 58.45, change: '+0.05%', isUp: true },
-  { pair: 'USD → MXN', rate: 18.12, change: '-0.30%', isUp: false },
-  { pair: 'EUR → INR', rate: 96.75, change: '+0.18%', isUp: true },
-  { pair: 'JPY → INR', rate: 0.58, change: '-0.22%', isUp: false },
+  { base: 'USD', target: 'INR', label: 'USD → INR' },
+  { base: 'AED', target: 'INR', label: 'AED → INR' },
+  { base: 'GBP', target: 'INR', label: 'GBP → INR' },
+  { base: 'CAD', target: 'INR', label: 'CAD → INR' },
+  { base: 'AUD', target: 'INR', label: 'AUD → INR' },
+  { base: 'SGD', target: 'INR', label: 'SGD → INR' },
+  { base: 'EUR', target: 'INR', label: 'EUR → INR' },
 ];
 
-interface TickerItem {
-  pair: string;
-  rate: number;
-  change: string;
-  isUp: boolean;
-  displayRate: string;
-}
-
 export const LiveTicker: React.FC = () => {
-  const [items, setItems] = useState<TickerItem[]>(
-    TICKER_PAIRS.map((p) => ({ ...p, displayRate: p.rate.toFixed(2) }))
-  );
-
-  // Randomly fluctuate rates every 3 seconds for a "live" feel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setItems((prev) =>
-        prev.map((item) => {
-          const fluctuation = (Math.random() - 0.5) * 0.08;
-          const newRate = parseFloat((item.rate + fluctuation).toFixed(2));
-          const isUp = fluctuation >= 0;
-          const pctChange = ((fluctuation / item.rate) * 100).toFixed(2);
+  // Use React Query with 30s auto-refresh interval for Live Ticker
+  const { data: rates, isLoading } = useQuery({
+    queryKey: ['liveTickerRates'],
+    queryFn: async () => {
+      const results = await Promise.all(
+        TICKER_PAIRS.map(async (pair) => {
+          const res = await apiService.getLatestRate(pair.base, pair.target);
           return {
-            ...item,
-            rate: newRate,
-            displayRate: newRate.toFixed(2),
-            isUp,
-            change: `${isUp ? '+' : ''}${pctChange}%`,
+            pair: pair.label,
+            rate: res.rate,
+            change: `${res.change24h >= 0 ? '+' : ''}${res.change24h}%`,
+            isUp: res.change24h >= 0,
+            source: res.source,
           };
         })
       );
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+      return results;
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds
+    staleTime: 25000,
+  });
 
-  // Duplicate for seamless infinite scroll
-  const allItems = [...items, ...items];
+  const displayItems = rates || [
+    { pair: 'USD → INR', rate: 96.56, change: '+0.18%', isUp: true, source: 'Frankfurter API' },
+    { pair: 'AED → INR', rate: 26.28, change: '+0.12%', isUp: true, source: 'Frankfurter API' },
+    { pair: 'GBP → INR', rate: 122.40, change: '+0.25%', isUp: true, source: 'Frankfurter API' },
+    { pair: 'CAD → INR', rate: 69.80, change: '-0.08%', isUp: false, source: 'Frankfurter API' },
+    { pair: 'AUD → INR', rate: 62.50, change: '+0.15%', isUp: true, source: 'Frankfurter API' },
+  ];
+
+  // Duplicate list for smooth seamless ticker scroll
+  const marqueeItems = [...displayItems, ...displayItems];
 
   return (
     <div className="w-full bg-slate-950 border-b border-slate-800/80 select-none overflow-hidden">
@@ -62,25 +57,25 @@ export const LiveTicker: React.FC = () => {
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500"></span>
           </span>
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">
-            Live FX
+            Live FX Feed (30s)
           </span>
         </div>
 
         {/* Scrolling ticker */}
         <div className="overflow-hidden flex-1 relative">
           <div className="ticker-track">
-            {allItems.map((item, idx) => (
+            {marqueeItems.map((item, idx) => (
               <div
                 key={idx}
-                className="flex items-center gap-1 mx-4 font-mono shrink-0"
+                className="flex items-center gap-1.5 mx-4 font-mono shrink-0"
               >
-                <span className="text-[11px] text-slate-400">{item.pair}</span>
+                <span className="text-[11px] text-slate-400 font-semibold">{item.pair}</span>
                 <span
-                  className={`text-[11px] font-bold transition-colors duration-700 ${
+                  className={`text-[11px] font-bold transition-colors duration-500 ${
                     item.isUp ? 'text-emerald-400' : 'text-rose-400'
                   }`}
                 >
-                  {item.displayRate}
+                  ₹{item.rate.toFixed(2)}
                 </span>
                 <span
                   className={`flex items-center text-[10px] font-semibold ${
@@ -100,10 +95,12 @@ export const LiveTicker: React.FC = () => {
           </div>
         </div>
 
-        {/* Right side label */}
-        <div className="flex items-center gap-1 px-3 border-l border-slate-800 shrink-0 bg-slate-900/80 h-full">
+        {/* Right side source badge */}
+        <div className="flex items-center gap-1.5 px-3 border-l border-slate-800 shrink-0 bg-slate-900/80 h-full">
           <Zap className="w-2.5 h-2.5 text-amber-400" />
-          <span className="text-[10px] text-slate-500 font-mono">Frankfurter</span>
+          <span className="text-[10px] text-slate-400 font-mono font-medium">
+            {isLoading ? 'Polling Live...' : 'Frankfurter API'}
+          </span>
         </div>
       </div>
     </div>

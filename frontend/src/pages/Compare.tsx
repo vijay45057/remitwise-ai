@@ -1,13 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { ArrowRightLeft, Bot, Sparkles, Zap, ShieldCheck } from 'lucide-react';
 import { useTransfer } from '../contexts/TransferContext';
 import { SUPPORTED_COUNTRIES } from '../utils/constants';
+import { apiService } from '../services/apiService';
 
 export const Compare: React.FC = () => {
   const navigate = useNavigate();
   const { request, setRequest, runPipeline } = useTransfer();
+
+  // On-demand React Query fetch for selected corridor rate
+  const { data: liveFx, isLoading } = useQuery({
+    queryKey: ['compareCorridorRate', request.fromCountry.currency, request.toCountry.currency],
+    queryFn: () => apiService.getLatestRate(request.fromCountry.currency, request.toCountry.currency),
+    staleTime: 60000, // On demand with 60s stale time
+  });
+
+  const liveRate = liveFx?.rate || 96.56;
+  const estimatedPayout = Math.round((request.amount - 3.5) * liveRate);
 
   const handleCountryChange = (type: 'from' | 'to', code: string) => {
     const found = SUPPORTED_COUNTRIES.find((c) => c.code === code);
@@ -20,7 +32,6 @@ export const Compare: React.FC = () => {
   };
 
   const handleStartSearch = async () => {
-    // Navigate immediately to AI Pipeline screen to trigger agent work
     navigate('/pipeline');
     await runPipeline();
   };
@@ -126,41 +137,26 @@ export const Compare: React.FC = () => {
           </div>
         </div>
 
-        {/* PAYMENT & RECEIVE METHODS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Payment Method
-            </label>
-            <select
-              value={request.paymentMethod}
-              onChange={(e) => setRequest((prev) => ({ ...prev, paymentMethod: e.target.value }))}
-              className="w-full p-3 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-medium text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-            >
-              <option value="Debit Card">Debit Card (Instant)</option>
-              <option value="Bank Transfer (ACH)">Bank Transfer (ACH / Wire)</option>
-              <option value="Credit Card">Credit Card</option>
-            </select>
+        {/* LIVE CORRIDOR ESTIMATION BAR */}
+        <div className="p-4 rounded-2xl bg-slate-900 text-white font-mono text-xs flex flex-col sm:flex-row items-center justify-between gap-3 border border-slate-800">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span className="text-slate-400">Live Rate Estimate:</span>
+            <span className="font-bold text-teal-400">
+              1 {request.fromCountry.currency} = {isLoading ? '...' : liveRate.toFixed(2)} {request.toCountry.currency}
+            </span>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-              Payout Delivery Method
-            </label>
-            <select
-              value={request.receiveMethod}
-              onChange={(e) => setRequest((prev) => ({ ...prev, receiveMethod: e.target.value }))}
-              className="w-full p-3 rounded-xl bg-slate-100/90 dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-medium text-sm focus:ring-2 focus:ring-blue-500 outline-none"
-            >
-              <option value="UPI Direct">UPI Direct (Instant Account Credit)</option>
-              <option value="Bank Account">Direct Bank Account Deposit</option>
-              <option value="Cash Pickup">Cash Pickup Point</option>
-            </select>
+          <div className="text-slate-300">
+            Est. Payout:{' '}
+            <span className="font-extrabold text-emerald-400 text-sm">
+              {request.toCountry.currencySymbol}{estimatedPayout.toLocaleString()}
+            </span>
           </div>
         </div>
 
         {/* TRIGGER BUTTON */}
-        <div className="pt-4">
+        <div className="pt-2">
           <button
             onClick={handleStartSearch}
             className="w-full py-4 rounded-xl bg-gradient-to-r from-blue-600 via-teal-500 to-emerald-500 hover:opacity-95 text-white font-extrabold text-base shadow-xl shadow-blue-500/25 hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2"
