@@ -55,9 +55,14 @@ def get_latest_rate(
             detail="Unable to reach Frankfurter API. Check your network connection.",
         )
     except HTTPError as exc:
+        if exc.response is not None and exc.response.status_code == 404:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Currency pair '{base.upper()}/{target.upper()}' is not supported by Frankfurter API. Call /exchange/currencies to see supported currencies.",
+            )
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Upstream API error: {exc.response.status_code}",
+            detail=f"Upstream API error: {exc.response.status_code if exc.response else 'Unknown'}",
         )
 
 
@@ -98,9 +103,14 @@ def get_historical_rates(
             detail="Unable to reach Frankfurter API.",
         )
     except HTTPError as exc:
+        if exc.response is not None and exc.response.status_code == 404:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Currency pair '{base.upper()}/{target.upper()}' is not supported by Frankfurter API. Call /exchange/currencies to see supported currencies.",
+            )
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail=f"Upstream API error: {exc.response.status_code}",
+            detail=f"Upstream API error: {exc.response.status_code if exc.response else 'Unknown'}",
         )
 
 
@@ -131,8 +141,15 @@ def convert_amount(
     except ConnectionError:
         raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Network error.")
     except HTTPError as exc:
-        raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY,
-                            detail=f"Upstream error: {exc.response.status_code}")
+        if exc.response is not None and exc.response.status_code == 404:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Currency pair '{base.upper()}/{target.upper()}' is not supported by Frankfurter API. Call /exchange/currencies to see supported currencies.",
+            )
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Upstream API error: {exc.response.status_code if exc.response else 'Unknown'}",
+        )
 
 
 # ---------------------------------------------------------------------------

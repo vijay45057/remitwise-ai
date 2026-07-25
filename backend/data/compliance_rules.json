@@ -1,5 +1,6 @@
 {
-  "India": {
+  "IN": {
+    "country": "India",
     "currency": "INR",
     "kyc_required": true,
     "required_documents": [
@@ -11,7 +12,8 @@
     "aml_check": true,
     "sanctions_screening": true
   },
-  "United Arab Emirates": {
+  "AE": {
+    "country": "United Arab Emirates",
     "currency": "AED",
     "kyc_required": true,
     "required_documents": [
@@ -23,7 +25,8 @@
     "aml_check": true,
     "sanctions_screening": true
   },
-  "United States": {
+  "US": {
+    "country": "United States",
     "currency": "USD",
     "kyc_required": true,
     "required_documents": [
@@ -34,7 +37,8 @@
     "aml_check": true,
     "sanctions_screening": true
   },
-  "United Kingdom": {
+  "GB": {
+    "country": "United Kingdom",
     "currency": "GBP",
     "kyc_required": true,
     "required_documents": [
@@ -45,7 +49,8 @@
     "aml_check": true,
     "sanctions_screening": true
   },
-  "Canada": {
+  "CA": {
+    "country": "Canada",
     "currency": "CAD",
     "kyc_required": true,
     "required_documents": [
@@ -55,7 +60,8 @@
     "aml_check": true,
     "sanctions_screening": true
   },
-  "Singapore": {
+  "SG": {
+    "country": "Singapore",
     "currency": "SGD",
     "kyc_required": true,
     "required_documents": [
@@ -65,7 +71,8 @@
     "aml_check": true,
     "sanctions_screening": true
   },
-  "Australia": {
+  "AU": {
+    "country": "Australia",
     "currency": "AUD",
     "kyc_required": true,
     "required_documents": [
