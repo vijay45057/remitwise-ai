@@ -1,172 +1,118 @@
-{
-  "providers": [
-    {
-      "id": "wise",
-      "name": "Wise (TransferWise)",
-      "website": "https://wise.com",
-      "logo_url": "https://wise.com/public-resources/assets/logos/wise/brand_logo.svg",
-      "description": "Low-cost international money transfers using the mid-market exchange rate.",
-      "supported_corridors": [
-        { "from": "US", "to": "IN", "currencies": ["USD", "INR"] },
-        { "from": "GB", "to": "IN", "currencies": ["GBP", "INR"] },
-        { "from": "US", "to": "MX", "currencies": ["USD", "MXN"] },
-        { "from": "US", "to": "PH", "currencies": ["USD", "PHP"] },
-        { "from": "EU", "to": "BD", "currencies": ["EUR", "BDT"] },
-        { "from": "US", "to": "NG", "currencies": ["USD", "NGN"] }
-      ],
-      "payment_methods": ["bank_transfer", "debit_card", "credit_card"],
-      "delivery_methods": ["bank_deposit", "mobile_wallet"],
-      "fees": {
-        "structure": "percentage_plus_fixed",
-        "description": "Variable fee ~0.35%–2% depending on corridor and payment method",
-        "example_usd_to_inr": "~$3.69 for $1000 transfer"
-      },
-      "transfer_speed": {
-        "min_minutes": 30,
-        "max_hours": 48,
-        "typical_hours": 2
-      },
-      "compliance": {
-        "kyc_required": true,
-        "aml_screening": true,
-        "regulated_countries": ["US", "GB", "EU", "AU", "CA", "SG"]
-      },
-      "rating": 4.7,
-      "active": true
-    },
-    {
-      "id": "remitly",
-      "name": "Remitly",
-      "website": "https://remitly.com",
-      "logo_url": "https://www.remitly.com/images/logo.png",
-      "description": "Fast and reliable money transfers with a focus on migrant-friendly corridors.",
-      "supported_corridors": [
-        { "from": "US", "to": "IN", "currencies": ["USD", "INR"] },
-        { "from": "US", "to": "PH", "currencies": ["USD", "PHP"] },
-        { "from": "US", "to": "MX", "currencies": ["USD", "MXN"] },
-        { "from": "US", "to": "GT", "currencies": ["USD", "GTQ"] },
-        { "from": "CA", "to": "IN", "currencies": ["CAD", "INR"] },
-        { "from": "GB", "to": "KE", "currencies": ["GBP", "KES"] }
-      ],
-      "payment_methods": ["debit_card", "bank_transfer", "credit_card", "apple_pay"],
-      "delivery_methods": ["bank_deposit", "cash_pickup", "mobile_wallet", "home_delivery"],
-      "fees": {
-        "structure": "fixed_plus_exchange_markup",
-        "description": "Express: small fee, Economy: free but lower exchange rate",
-        "example_usd_to_inr": "~$2.99 for $1000 (Economy)"
-      },
-      "transfer_speed": {
-        "min_minutes": 10,
-        "max_hours": 72,
-        "typical_hours": 24
-      },
-      "compliance": {
-        "kyc_required": true,
-        "aml_screening": true,
-        "regulated_countries": ["US", "CA", "GB", "AU"]
-      },
-      "rating": 4.5,
-      "active": true
-    },
-    {
-      "id": "western_union",
-      "name": "Western Union",
-      "website": "https://westernunion.com",
-      "logo_url": "https://www.westernunion.com/content/dam/wu/images/logo.png",
-      "description": "Global money transfer network with extensive cash pickup locations worldwide.",
-      "supported_corridors": [
-        { "from": "US", "to": "IN", "currencies": ["USD", "INR"] },
-        { "from": "US", "to": "MX", "currencies": ["USD", "MXN"] },
-        { "from": "US", "to": "PH", "currencies": ["USD", "PHP"] },
-        { "from": "US", "to": "NG", "currencies": ["USD", "NGN"] },
-        { "from": "US", "to": "EG", "currencies": ["USD", "EGP"] },
-        { "from": "EU", "to": "MA", "currencies": ["EUR", "MAD"] }
-      ],
-      "payment_methods": ["cash", "debit_card", "credit_card", "bank_transfer"],
-      "delivery_methods": ["cash_pickup", "bank_deposit", "mobile_wallet"],
-      "fees": {
-        "structure": "fixed_plus_exchange_markup",
-        "description": "Fee varies by corridor and delivery method; markup on exchange rate",
-        "example_usd_to_inr": "~$4.99 for $1000 (bank deposit)"
-      },
-      "transfer_speed": {
-        "min_minutes": 0,
-        "max_hours": 120,
-        "typical_hours": 1
-      },
-      "compliance": {
-        "kyc_required": true,
-        "aml_screening": true,
-        "regulated_countries": ["US", "EU", "GB", "AU", "CA", "IN", "MX"]
-      },
-      "rating": 4.1,
-      "active": true
-    },
-    {
-      "id": "sendwave",
-      "name": "Sendwave",
-      "website": "https://sendwave.com",
-      "logo_url": "https://sendwave.com/logo.svg",
-      "description": "Zero-fee mobile-first transfers to Africa and Asia via mobile money.",
-      "supported_corridors": [
-        { "from": "US", "to": "KE", "currencies": ["USD", "KES"] },
-        { "from": "US", "to": "GH", "currencies": ["USD", "GHS"] },
-        { "from": "US", "to": "SN", "currencies": ["USD", "XOF"] },
-        { "from": "GB", "to": "UG", "currencies": ["GBP", "UGX"] },
-        { "from": "CA", "to": "TZ", "currencies": ["CAD", "TZS"] }
-      ],
-      "payment_methods": ["debit_card"],
-      "delivery_methods": ["mobile_wallet"],
-      "fees": {
-        "structure": "zero_fee",
-        "description": "No transfer fee; slight markup on exchange rate",
-        "example_usd_to_kes": "~$0 fee for any amount"
-      },
-      "transfer_speed": {
-        "min_minutes": 1,
-        "max_hours": 2,
-        "typical_hours": 0
-      },
-      "compliance": {
-        "kyc_required": true,
-        "aml_screening": true,
-        "regulated_countries": ["US", "CA", "GB"]
-      },
-      "rating": 4.6,
-      "active": true
-    },
-    {
-      "id": "xoom",
-      "name": "Xoom (PayPal)",
-      "website": "https://xoom.com",
-      "logo_url": "https://xoom.com/images/xoom-logo.png",
-      "description": "PayPal-owned remittance service with strong Latin America and India coverage.",
-      "supported_corridors": [
-        { "from": "US", "to": "IN", "currencies": ["USD", "INR"] },
-        { "from": "US", "to": "MX", "currencies": ["USD", "MXN"] },
-        { "from": "US", "to": "BR", "currencies": ["USD", "BRL"] },
-        { "from": "US", "to": "CO", "currencies": ["USD", "COP"] },
-        { "from": "US", "to": "PH", "currencies": ["USD", "PHP"] }
-      ],
-      "payment_methods": ["paypal", "bank_transfer", "debit_card", "credit_card"],
-      "delivery_methods": ["bank_deposit", "cash_pickup", "mobile_reload"],
-      "fees": {
-        "structure": "fixed",
-        "description": "Flat fees per transfer tier; additional markup for credit card",
-        "example_usd_to_inr": "~$4.99 for $1000 (bank transfer)"
-      },
-      "transfer_speed": {
-        "min_minutes": 5,
-        "max_hours": 96,
-        "typical_hours": 3
-      },
-      "compliance": {
-        "kyc_required": true,
-        "aml_screening": true,
-        "regulated_countries": ["US"]
-      },
-      "rating": 4.2,
-      "active": true
-    }
-  ]
-}
+[
+  {
+    "provider_id": "wise",
+    "provider_name": "Wise",
+    "website": "https://wise.com",
+    "supported_corridors": [
+      "UAE-IN",
+      "USA-IN",
+      "UK-IN",
+      "CAN-IN",
+      "SGP-IN",
+      "AUS-IN"
+    ],
+    "payment_methods": [
+      "Bank Transfer",
+      "Debit Card",
+      "Credit Card"
+    ],
+    "payout_methods": [
+      "Bank Account",
+      "UPI"
+    ],
+    "delivery_speed": "Same Day - 2 Days",
+    "fee_model": "Dynamic",
+    "tracking_available": true
+  },
+  {
+    "provider_id": "remitly",
+    "provider_name": "Remitly",
+    "website": "https://www.remitly.com",
+    "supported_corridors": [
+      "USA-IN",
+      "UK-IN",
+      "CAN-IN",
+      "AUS-IN",
+      "SGP-IN",
+      "UAE-IN"
+    ],
+    "payment_methods": [
+      "Bank Transfer",
+      "Debit Card",
+      "Credit Card"
+    ],
+    "payout_methods": [
+      "Bank Account",
+      "Cash Pickup",
+      "UPI"
+    ],
+    "delivery_speed": "Minutes - 2 Days",
+    "fee_model": "Dynamic",
+    "tracking_available": true
+  },
+  {
+    "provider_id": "western_union",
+    "provider_name": "Western Union",
+    "website": "https://www.westernunion.com",
+    "supported_corridors": [
+      "UAE-IN",
+      "USA-IN",
+      "UK-IN",
+      "CAN-IN",
+      "SGP-IN",
+      "AUS-IN"
+    ],
+    "payment_methods": [
+      "Bank Transfer",
+      "Debit Card",
+      "Credit Card",
+      "Cash"
+    ],
+    "payout_methods": [
+      "Bank Account",
+      "Cash Pickup"
+    ],
+    "delivery_speed": "Minutes - 3 Days",
+    "fee_model": "Dynamic",
+    "tracking_available": true
+  },
+  {
+    "provider_id": "xe",
+    "provider_name": "XE Money Transfer",
+    "website": "https://www.xe.com",
+    "supported_corridors": [
+      "USA-IN",
+      "UK-IN",
+      "CAN-IN",
+      "AUS-IN"
+    ],
+    "payment_methods": [
+      "Bank Transfer"
+    ],
+    "payout_methods": [
+      "Bank Account"
+    ],
+    "delivery_speed": "1 - 3 Days",
+    "fee_model": "Dynamic",
+    "tracking_available": true
+  },
+  {
+    "provider_id": "al_ansari",
+    "provider_name": "Al Ansari Exchange",
+    "website": "https://alansariexchange.com",
+    "supported_corridors": [
+      "UAE-IN"
+    ],
+    "payment_methods": [
+      "Cash",
+      "Bank Transfer"
+    ],
+    "payout_methods": [
+      "Bank Account",
+      "Cash Pickup"
+    ],
+    "delivery_speed": "Minutes - 1 Day",
+    "fee_model": "Dynamic",
+    "tracking_available": true
+  }
+]

@@ -1,328 +1,79 @@
 {
-  "compliance_rules": [
-    {
-      "country_code": "US",
-      "country_name": "United States",
-      "region": "North America",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": true,
-      "transaction_limits": {
-        "single_transaction_usd": 10000,
-        "daily_usd": 50000,
-        "annual_usd": 1000000,
-        "notes": "Transfers ≥$3,000 trigger enhanced due diligence; ≥$10,000 require SAR reporting consideration."
-      },
-      "required_documents": [
-        {
-          "type": "government_id",
-          "description": "Valid government-issued photo ID",
-          "examples": ["Passport", "Driver's License", "State ID"],
-          "mandatory": true
-        },
-        {
-          "type": "ssn_or_itin",
-          "description": "Social Security Number or Individual Taxpayer Identification Number",
-          "examples": ["SSN", "ITIN"],
-          "mandatory": true
-        },
-        {
-          "type": "proof_of_address",
-          "description": "Recent proof of residential address",
-          "examples": ["Utility bill", "Bank statement (≤90 days)"],
-          "mandatory": false,
-          "threshold_usd": 3000
-        }
-      ],
-      "regulatory_framework": ["FinCEN BSA", "USA PATRIOT Act", "OFAC Sanctions"],
-      "risk_level": "medium",
-      "notes": "Subject to OFAC sanctions list; high-value transfers require source-of-funds declaration."
-    },
-    {
-      "country_code": "IN",
-      "country_name": "India",
-      "region": "South Asia",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": false,
-      "transaction_limits": {
-        "single_transaction_usd": 250000,
-        "daily_usd": 250000,
-        "annual_usd": 250000,
-        "notes": "LRS limit of $250,000 per financial year for resident individuals."
-      },
-      "required_documents": [
-        {
-          "type": "aadhaar",
-          "description": "Aadhaar Card (12-digit UID)",
-          "examples": ["Aadhaar Card", "Aadhaar-linked mobile OTP"],
-          "mandatory": true
-        },
-        {
-          "type": "pan_card",
-          "description": "Permanent Account Number card",
-          "examples": ["PAN Card"],
-          "mandatory": true
-        },
-        {
-          "type": "bank_account",
-          "description": "Indian bank account details for inward remittance",
-          "examples": ["Account number + IFSC code"],
-          "mandatory": true
-        }
-      ],
-      "regulatory_framework": ["FEMA 1999", "RBI PMLA", "FATF recommendations"],
-      "risk_level": "low",
-      "notes": "Inward remittances fully permitted; outward remittances governed by LRS scheme."
-    },
-    {
-      "country_code": "GB",
-      "country_name": "United Kingdom",
-      "region": "Europe",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": true,
-      "transaction_limits": {
-        "single_transaction_usd": null,
-        "daily_usd": null,
-        "annual_usd": null,
-        "notes": "No statutory limit but enhanced due diligence applies for large or unusual transfers."
-      },
-      "required_documents": [
-        {
-          "type": "government_id",
-          "description": "Valid UK or foreign government-issued photo ID",
-          "examples": ["Passport", "UK Driver's Licence", "National Identity Card"],
-          "mandatory": true
-        },
-        {
-          "type": "proof_of_address",
-          "description": "Proof of UK residential address",
-          "examples": ["Council Tax bill", "Bank statement (≤3 months)", "Utility bill"],
-          "mandatory": true
-        }
-      ],
-      "regulatory_framework": ["FCA MLR 2017", "Proceeds of Crime Act 2002", "UK Sanctions"],
-      "risk_level": "low",
-      "notes": "Post-Brexit the UK maintains its own sanctions regime independent of EU."
-    },
-    {
-      "country_code": "PH",
-      "country_name": "Philippines",
-      "region": "Southeast Asia",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": false,
-      "transaction_limits": {
-        "single_transaction_usd": 500,
-        "daily_usd": 10000,
-        "annual_usd": 120000,
-        "notes": "BSP Circular 649 governs inward remittances; cash-out limits vary by payout partner."
-      },
-      "required_documents": [
-        {
-          "type": "government_id",
-          "description": "Philippine government-issued ID",
-          "examples": ["Passport", "SSS ID", "UMID", "PhilHealth ID", "Postal ID"],
-          "mandatory": true
-        },
-        {
-          "type": "mobile_number",
-          "description": "Registered Philippine mobile number for mobile wallet payouts",
-          "examples": ["Globe number", "Smart number"],
-          "mandatory": false
-        }
-      ],
-      "regulatory_framework": ["BSP AML Act", "AMLC Regulations", "Republic Act 9160"],
-      "risk_level": "medium",
-      "notes": "FATF grey-listed in the past; enhanced monitoring for large transfers."
-    },
-    {
-      "country_code": "MX",
-      "country_name": "Mexico",
-      "region": "Latin America",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": false,
-      "transaction_limits": {
-        "single_transaction_usd": 4000,
-        "daily_usd": 4000,
-        "annual_usd": null,
-        "notes": "CNBV limits inbound cash remittances to $4,000/month per recipient without KYC."
-      },
-      "required_documents": [
-        {
-          "type": "matrícula_consular",
-          "description": "Consular registration card or national ID",
-          "examples": ["Matrícula Consular", "INE/IFE Voter ID", "Passport"],
-          "mandatory": true
-        },
-        {
-          "type": "curp",
-          "description": "Clave Única de Registro de Población",
-          "examples": ["CURP certificate"],
-          "mandatory": false
-        }
-      ],
-      "regulatory_framework": ["LFPIORPI", "CNBV AML", "SAT Reporting"],
-      "risk_level": "medium",
-      "notes": "Drug-trafficking-related transactions are heavily monitored by SAT and FIU."
-    },
-    {
-      "country_code": "KE",
-      "country_name": "Kenya",
-      "region": "Africa",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": false,
-      "transaction_limits": {
-        "single_transaction_usd": 10000,
-        "daily_usd": 10000,
-        "annual_usd": null,
-        "notes": "M-Pesa and bank transfers have per-transaction limits set by CBK."
-      },
-      "required_documents": [
-        {
-          "type": "national_id",
-          "description": "Kenyan National ID or passport",
-          "examples": ["Kenyan National ID", "Passport"],
-          "mandatory": true
-        },
-        {
-          "type": "mpesa_number",
-          "description": "Registered M-Pesa mobile number",
-          "examples": ["Safaricom M-Pesa number"],
-          "mandatory": false
-        }
-      ],
-      "regulatory_framework": ["CBK AML/CFT", "Proceeds of Crime and Anti-Money Laundering Act"],
-      "risk_level": "low",
-      "notes": "Strong mobile money ecosystem; M-Pesa is the dominant delivery channel."
-    },
-    {
-      "country_code": "NG",
-      "country_name": "Nigeria",
-      "region": "Africa",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": true,
-      "transaction_limits": {
-        "single_transaction_usd": null,
-        "daily_usd": null,
-        "annual_usd": null,
-        "notes": "CBN mandates USD disbursement in cash for inward remittances; recipient must collect in USD or at official rate."
-      },
-      "required_documents": [
-        {
-          "type": "bvn",
-          "description": "Bank Verification Number",
-          "examples": ["BVN from any Nigerian bank"],
-          "mandatory": true
-        },
-        {
-          "type": "national_id",
-          "description": "NIN-linked ID",
-          "examples": ["NIN slip", "National e-ID card", "Passport", "Voter's card"],
-          "mandatory": true
-        }
-      ],
-      "regulatory_framework": ["CBN AML/CFT", "NFIU Act", "FATF recommendations"],
-      "risk_level": "high",
-      "notes": "FATF grey-listed; enhanced due diligence mandatory for all transfers; BVN verification required."
-    },
-    {
-      "country_code": "DE",
-      "country_name": "Germany",
-      "region": "Europe",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": true,
-      "transaction_limits": {
-        "single_transaction_usd": null,
-        "daily_usd": null,
-        "annual_usd": null,
-        "notes": "EU AML directives apply; no statutory cap but unusual transactions are flagged."
-      },
-      "required_documents": [
-        {
-          "type": "government_id",
-          "description": "EU/EEA government-issued photo ID",
-          "examples": ["German Personalausweis", "Passport", "EU Residence Permit"],
-          "mandatory": true
-        },
-        {
-          "type": "proof_of_address",
-          "description": "German address registration (Anmeldung)",
-          "examples": ["Anmeldebescheinigung"],
-          "mandatory": false
-        }
-      ],
-      "regulatory_framework": ["EU 6AMLD", "BaFin", "GDPR data compliance"],
-      "risk_level": "low",
-      "notes": "EU sanctions list and SWIFT screening apply to all international transfers."
-    },
-    {
-      "country_code": "CA",
-      "country_name": "Canada",
-      "region": "North America",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": true,
-      "transaction_limits": {
-        "single_transaction_usd": null,
-        "daily_usd": null,
-        "annual_usd": null,
-        "notes": "FINTRAC reporting required for transfers ≥CAD 10,000."
-      },
-      "required_documents": [
-        {
-          "type": "government_id",
-          "description": "Canadian or foreign government-issued photo ID",
-          "examples": ["Passport", "Driver's Licence", "PR Card", "Social Insurance Number"],
-          "mandatory": true
-        },
-        {
-          "type": "sin",
-          "description": "Social Insurance Number (for tax reporting on large transfers)",
-          "examples": ["SIN card or letter"],
-          "mandatory": false,
-          "threshold_usd": 7500
-        }
-      ],
-      "regulatory_framework": ["FINTRAC PCMLTFA", "OSFI guidelines", "OFAC & UN sanctions"],
-      "risk_level": "low",
-      "notes": "Large cash transactions and suspicious transactions must be reported to FINTRAC."
-    },
-    {
-      "country_code": "AU",
-      "country_name": "Australia",
-      "region": "Oceania",
-      "kyc_required": true,
-      "aml_required": true,
-      "sanctions_screening": true,
-      "transaction_limits": {
-        "single_transaction_usd": null,
-        "daily_usd": null,
-        "annual_usd": null,
-        "notes": "AUSTRAC reporting threshold is AUD 10,000."
-      },
-      "required_documents": [
-        {
-          "type": "government_id",
-          "description": "Australian or foreign government-issued photo ID",
-          "examples": ["Passport", "Australian Driver's Licence", "Medicare Card"],
-          "mandatory": true
-        },
-        {
-          "type": "tfn",
-          "description": "Tax File Number (for large or recurring transfers)",
-          "examples": ["TFN issued by ATO"],
-          "mandatory": false
-        }
-      ],
-      "regulatory_framework": ["AUSTRAC AML/CTF Act 2006", "DFAT Sanctions"],
-      "risk_level": "low",
-      "notes": "AUSTRAC oversees all remittance dealers; registration mandatory for operators."
-    }
-  ]
+  "India": {
+    "currency": "INR",
+    "kyc_required": true,
+    "required_documents": [
+      "Government-issued ID",
+      "PAN (if applicable)",
+      "Recipient Bank Account Details"
+    ],
+    "purpose_required": true,
+    "aml_check": true,
+    "sanctions_screening": true
+  },
+  "United Arab Emirates": {
+    "currency": "AED",
+    "kyc_required": true,
+    "required_documents": [
+      "Emirates ID",
+      "Passport",
+      "Visa (if applicable)"
+    ],
+    "purpose_required": true,
+    "aml_check": true,
+    "sanctions_screening": true
+  },
+  "United States": {
+    "currency": "USD",
+    "kyc_required": true,
+    "required_documents": [
+      "Government-issued ID",
+      "SSN (when required)"
+    ],
+    "purpose_required": true,
+    "aml_check": true,
+    "sanctions_screening": true
+  },
+  "United Kingdom": {
+    "currency": "GBP",
+    "kyc_required": true,
+    "required_documents": [
+      "Passport",
+      "Driving Licence"
+    ],
+    "purpose_required": true,
+    "aml_check": true,
+    "sanctions_screening": true
+  },
+  "Canada": {
+    "currency": "CAD",
+    "kyc_required": true,
+    "required_documents": [
+      "Government-issued ID"
+    ],
+    "purpose_required": true,
+    "aml_check": true,
+    "sanctions_screening": true
+  },
+  "Singapore": {
+    "currency": "SGD",
+    "kyc_required": true,
+    "required_documents": [
+      "NRIC or Passport"
+    ],
+    "purpose_required": true,
+    "aml_check": true,
+    "sanctions_screening": true
+  },
+  "Australia": {
+    "currency": "AUD",
+    "kyc_required": true,
+    "required_documents": [
+      "Passport",
+      "Driver Licence"
+    ],
+    "purpose_required": true,
+    "aml_check": true,
+    "sanctions_screening": true
+  }
 }
